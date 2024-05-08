@@ -4,13 +4,10 @@
 const char *ssid = "RT_SHOOTER";
 const char *password = "Poltorashka";
 
-#include "assets/img/aim.h"
-#include "assets/img/bird.h"
-#include "assets/img/scenes.h"
-#include "assets/js/responce.h"
-#include "assets/templates/responce.h"
+#include "assets/assets.h"
 
-#define TRIGGER_PIN D3
+#define TRIGGER_PIN 0
+#define CALIBRATE_PIN 2
 
 const byte DNS_PORT = 53;
 IPAddress apIP(10, 10, 10, 1);
@@ -25,35 +22,43 @@ void setup_wifi()
     WiFi.softAP(ssid, password);
 
     IPAddress IP = WiFi.softAPIP();
-    
-    pinMode(TRIGGER_PIN, INPUT_PULLUP);
-    // attachInterrupt(digitalPinToInterrupt(TRIGGER_PIN), trigger_interrupt, FALLING);
 
+    pinMode(TRIGGER_PIN, INPUT_PULLUP);
+    attachInterrupt(digitalPinToInterrupt(TRIGGER_PIN), trigger_interrupt, FALLING);
+    pinMode(CALIBRATE_PIN, INPUT_PULLUP);
+    attachInterrupt(digitalPinToInterrupt(CALIBRATE_PIN), calibrate_center, FALLING);
+
+    Serial.println("Hello, world!");
     Serial.println(IP);
     server.on("/", handleRoot);
-    server.on("/calibration", handleCalibrate);
     server.on("/calibrate_x_1", handleCalibrateX1);
     server.on("/calibrate_x_2", handleCalibrateX2);
     server.on("/calibrate_y_1", handleCalibrateY1);
     server.on("/calibrate_y_2", handleCalibrateY2);
-    server.on("/img/aim.png", handle_get_aim);
-    server.on("/img/ducks.png", handle_get_bird);
-    server.on("/img/scenes.png", handle_get_scene);
-    server.on("/js/responce.js", handle_get_script);
+
+    server.on("/img/aim.png", handleGetAim);
+    server.on("/img/ducks.png", handleGetDucks);
+    server.on("/img/scenes.png", handleGetScenes);
+    server.on("/img/transscenes.png", handleGetTransscenes);
+    server.on("/js/responce.js", handleGetScript);
+    server.on("/calibration", handleGetCalibration);
+    server.on("/manual_calibration", handleCalibrate);
+
     server.on("/get_data", handleGetData);
+
     server.begin();
 
     dnsServer.start(DNS_PORT, "*", IP);
 }
 
+void IRAM_ATTR trigger_interrupt()
+{
+    trigger_state = 0;
+}
+
 void handle_server()
 {
     server.handleClient();
-}
-
-void handleRoot()
-{
-    server.send(200, "text/html", templates_responce_html, templates_responce_html_len);
 }
 
 void handleCalibrate()
@@ -93,31 +98,35 @@ void handleCalibrateY2()
 void handleGetData()
 {
     point p = get_data();
-    server.send(200, "text/json", String("{\"x\": ") + (int)(p.x * 1920) + ", \"y\": " + (int)(p.y * 1080) + ", \"triggger_press\": " + (1 - trigger_state) + ", \"trigger_hold]\": " + (1 - digitalRead(TRIGGER_PIN)) + "}");
+    server.send(200, "text/json", String("{\"x\": ") + (int)(p.x * 1920) + ", \"y\": " + (int)(p.y * 1080) + ", \"press\": " + (1 - trigger_state) + ", \"hold\": " + (1 - digitalRead(TRIGGER_PIN)) + "}");
     trigger_state = 1;
 }
 
-void handle_get_aim()
+void handleGetAim()
 {
     server.send(200, "image/png", img_aim_png, img_aim_png_len);
 }
-
-void handle_get_bird()
+void handleGetDucks()
 {
-    server.send(200, "image/png", img_bird_png, img_bird_png_len);
+    server.send(200, "image/png", img_ducks_png, img_ducks_png_len);
 }
-
-void handle_get_scene()
+void handleGetScenes()
 {
     server.send(200, "image/png", img_scenes_png, img_scenes_png_len);
 }
-
-void handle_get_script()
+void handleGetTransscenes()
+{
+    server.send(200, "image/png", img_transscenes_png, img_transscenes_png_len);
+}
+void handleGetScript()
 {
     server.send(200, "application/javascript", js_responce_js, js_responce_js_len);
 }
-
-void trigger_interrupt()
+void handleRoot()
 {
-    trigger_state = 0;
+    server.send(200, "text/html", templates_responce_html, templates_responce_html_len);
+}
+void handleGetCalibration()
+{
+    server.send(200, "text/html", templates_calibration_html, templates_calibration_html_len);
 }

@@ -9,16 +9,21 @@
 void trigger_interrupt();
 void handle_server();
 void setup_wifi();
-void handleRoot();
-void handleCalibrate();
 void handleCalibrateX1();
 void handleCalibrateX2();
 void handleCalibrateY1();
 void handleCalibrateY2();
 void handleGetData();
-void handle_get_aim();
-void handle_get_bird();
-void handle_get_scene();
-void handle_get_script();
+
+void handleGetAim();
+void handleGetDucks();
+void handleGetScenes();
+void handleGetTransscenes();
+
+void handleGetScript();
+
+void handleRoot();
+void handleCalibrate();
+void handleGetCalibration();
 
 #endif

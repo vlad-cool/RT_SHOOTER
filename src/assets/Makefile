@@ -1,21 +1,22 @@
-.PHONE: all clean
+.PHONY: all clean
 
-all: img/aim.h img/bird.h img/scenes.h js/responce.h templates/responce.h
+IMAGES = img/aim.h img/ducks.h img/scenes.h img/transscenes.h
+JS_FILES = js/responce.h
+HTML_FILES = templates/responce.h templates/calibration.h
 
-img/aim.h: img/aim.png
-	xxd -i img/aim.png > img/aim.h
+all: assets.h
 
-img/bird.h: img/bird.png
-	xxd -i img/bird.png > img/bird.h
+assets.h: $(IMAGES) $(JS_FILES) $(HTML_FILES)
+	cat $(IMAGES) $(JS_FILES) $(HTML_FILES) > assets.h
 
-img/scenes.h: img/scenes.png
-	xxd -i img/scenes.png > img/scenes.h
+img/%.h: img/%.png
+	xxd -i $< > $@
 
-js/responce.h: js/responce.js
-	xxd -i js/responce.js > js/responce.h
+js/%.h: js/%.js
+	xxd -i $< > $@
 
-templates/responce.h: templates/responce.html
-	xxd -i templates/responce.html > templates/responce.h
+templates/%.h: templates/%.html
+	xxd -i $< > $@
 
 clean:
-	rm */*.h
+	rm -f img/*.h js/*.h templates/*.h

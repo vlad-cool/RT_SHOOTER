@@ -13,13 +13,15 @@ struct point
     point(float x, float y);
 };
 
+#include "dmp.hpp"
 
 void setup_dmp();
-
+vector3D get_vector();
 void calibrate_x_1();
 void calibrate_x_2();
 void calibrate_y_1();
 void calibrate_y_2();
+void calibrate_center();
 
 point get_data();
 
