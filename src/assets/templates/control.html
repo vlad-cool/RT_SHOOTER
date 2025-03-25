@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cross Button Layout</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            touch-action: manipulation;
+        }
+
+        .cross-container {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-template-rows: repeat(3, 100px);
+            gap: 10px;
+        }
+
+        .btn {
+            width: 100%;
+            height: 100%;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            background-color: #4CAF50;
+            color: white;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #45a049;
+        }
+
+        .top {
+            grid-column: 2;
+            grid-row: 1;
+            background-color: #f44336;
+        }
+
+        .left {
+            grid-column: 1;
+            grid-row: 2;
+            background-color: #2196F3;
+        }
+
+        .center {
+            grid-column: 2;
+            grid-row: 2;
+            background-color: #ff9800;
+        }
+
+        .right {
+            grid-column: 3;
+            grid-row: 2;
+            background-color: #2196F3;
+        }
+
+        .bottom {
+            grid-column: 2;
+            grid-row: 3;
+            background-color: #f44336;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="cross-container">
+        <button class="btn top" onclick="sendRequest('control/t')">Top</button>
+        <button class="btn left" onclick="sendRequest('control/l')">Left</button>
+        <button class="btn center" onclick="sendRequest('control/s')">Center</button>
+        <button class="btn right" onclick="sendRequest('control/r')">Right</button>
+        <button class="btn bottom" onclick="sendRequest('control/b')">Bottom</button>
+    </div>
+
+    <script>
+        function sendRequest(url) {
+            fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+                .then(response => { })
+                .then(data => { })
+                .catch(error => { });
+        }
+    </script>
+</body>
+
+</html>
